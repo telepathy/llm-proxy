@@ -1,0 +1,41 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: 120s
+  write_timeout: 120s
+
+auth:
+  enabled: true
+  users:
+    - username: "user1"
+      password: "changeme"
+
+api_keys:
+  openrouter: "sk-or-v1-your-key-here"
+  openai: "sk-your-key-here"
+
+default_backend: "openrouter"
+
+routes:
+  - model_pattern: "gpt-4o"
+    backend: "openai-direct"
+  - model_pattern: "*"
+    backend: "openrouter"
+
+backends:
+  openrouter:
+    type: "openrouter"
+    base_url: "https://openrouter.ai/api/v1"
+    api_key: "${api_keys.openrouter}"
+    extra_headers:
+      HTTP-Referer: "https://your-site.com"
+      X-Title: "LLM Proxy"
+
+  openai-direct:
+    type: "openai"
+    base_url: "https://api.openai.com/v1"
+    api_key: "${api_keys.openai}"
+
+logging:
+  level: "info"
+  format: "json"
